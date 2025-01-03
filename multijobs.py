@@ -1,7 +1,8 @@
-boss直聘职位爬取
-
-青岛城市ID： 101120200
-全国城市ID：100010000
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+# @author by wangcw @ 2025
+# @generate at 2025/1/3 11:46
+# comment: 循环执行多职位、城市的查询
 
 positions = ['人力资源',
              '人事',

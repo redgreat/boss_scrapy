@@ -8,6 +8,9 @@ class BossSpider(scrapy.Spider):
     start_urls = ["https://www.zhipin.com/"]
     page = 1
 
+    positions = ["DBA", "Python"]
+    cities = ["101120200", "101010100"]
+
     def parse(self, response):
         with open('test.html', 'w', encoding='utf-8') as f:
             f.write(response.text)

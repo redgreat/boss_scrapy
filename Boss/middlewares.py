@@ -10,7 +10,6 @@ import time
 import json
 
 
-
 class BossSpiderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
