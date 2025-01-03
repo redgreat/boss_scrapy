@@ -63,7 +63,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   "Boss.pipelines.BossPipeline": 300,
+   # "Boss.pipelines.BossPipeline": 300,
    # "Boss.pipelines.ExcelPipeline": 301,
 
 }
