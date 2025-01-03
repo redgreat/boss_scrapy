@@ -14,7 +14,7 @@ class BossSpider(scrapy.Spider):
                  '系统运维', '数据管理', 'UI', '项目管理', '产品', '产品架构师', '市场分析师', '项目经理', '算法架构师',
                  '算法工程师', '方案专家', '硬件工程师', '运营', '运维', '商务', '通路行销', '招投标', '法务',
                  '电催/催收', '外访/催收外访', '设计师', '策划师', '大客户经理', '销售', '供应链', '仓库管理专员',
-                 '客服', '车务专员']  # 职位
+                 '客服', '车务专员', 'DBA']  # 职位
     cities = ["100010000"]  # 城市列表
 
     def start_requests(self):
@@ -33,7 +33,7 @@ class BossSpider(scrapy.Spider):
         if current_page == 1:
             with open(filename, 'w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
-                writer.writerow(['职位', '公司', '薪资', '经验', '教育', '技能'])
+                writer.writerow(['位置', '公司名', '公司行业', '学历要求', '经验要求', '薪资', '技能要求', '职位'])
 
         li_list = response.xpath('//li[@class="job-card-wrapper"]')
         print(f"Number of items found on page {current_page}: {len(li_list)}")
@@ -47,27 +47,35 @@ class BossSpider(scrapy.Spider):
             salary = li.xpath(".//span[@class='salary']/text()").extract_first() or ''
             area = li.xpath(".//span[@class='job-area']/text()").extract_first() or ''
 
-            job_label_list = li.xpath(".//ul[@class='tag-list']//text()").extract()
-            if len(job_label_list) >= 2:
-                experience = job_label_list[0] or ''
-                education = job_label_list[1] or ''
+            # 确保提取job_lable_list的正确性
+            job_lable_list = li.xpath(".//ul[@class='tag-list']//text()").extract()
+            if len(job_lable_list) >= 2:
+                experience = job_lable_list[0] or ''
+                education = job_lable_list[1] or ''
             else:
                 experience = ''
                 education = ''
 
             company = li.xpath(".//h3[@class='company-name']/a/text()").extract_first() or ''
+
+            # 确保提取company_message的正确性
             company_message = li.xpath(".//ul[@class='company-tag-list']//text()").extract()
             company_type = company_message[0] if company_message else ''
+
+            # 提取boon字段
             boon = li.xpath('.//div[@class="job_card_footer"]//div[@class="info-desc"]/text()').extract()
             boon = boon[0] if boon else None
-            skill_list = li.xpath('.//div[@class="job-card-footer clearfix"]//ul[@class="tag-list"]/li/text()').extract() or []
+            # 技能
+            skill_list = li.xpath(
+                ".//div[@class='job-card-footer clearfix']//ul[@class='tag-list']/li/text()").extract() or []
             skill = "|".join(skill_list)
 
             # 将数据写入 CSV 文件
             with open(filename, 'a', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
-                writer.writerow([title, company, salary, experience, education, skill])
+                writer.writerow([title, area, salary, experience, education, company, company_type, skill])
 
+            # 创建BossItem对象并传递数据
             book = BossItem(
                 title=title,
                 address=area,
